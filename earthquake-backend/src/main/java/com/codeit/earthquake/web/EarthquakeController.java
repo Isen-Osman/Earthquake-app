@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/earthquakes")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000") // за React dev server
 public class EarthquakeController {
 
     private final EarthquakeService service;

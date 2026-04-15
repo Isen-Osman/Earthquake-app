@@ -1,6 +1,7 @@
-import React from "react";
-import UseEarthquakes from "./hooks/UseEarthquakes.js";
-import FilterBar from "./ui/FilterBar.jsx";
+import React from 'react';
+import useEarthquakes from './hooks/useEarthquakes.js';
+import FilterBar from './ui/FilterBar.jsx';
+
 import EarthquakeTable from "./ui/EarthquakeTable.jsx";
 import LoadingSpinner from "./ui/LoadingSpinner.jsx";
 import ErrorMessage from "./ui/ErrorMessage.jsx";
@@ -15,7 +16,7 @@ const App = () => {
         onDelete,
         onFilterByTime,
         refetch,
-    } = UseEarthquakes();
+    } = useEarthquakes();
 
     return (
         <div className="min-vh-100 bg-light py-5">

@@ -17,4 +17,6 @@ public interface EarthquakeService {
      List<Earthquake> getByTime(Instant minTime);
 
      boolean deleteById(Long id);
+
+     void deleteAll();
 }

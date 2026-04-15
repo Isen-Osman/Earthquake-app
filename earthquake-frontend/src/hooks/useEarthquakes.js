@@ -5,6 +5,7 @@ const initialState = {
     earthquakes: [],
     loading: true,
     error: null,
+    lastUpdated: null,
 };
 
 const useEarthquakes = () => {
@@ -19,13 +20,17 @@ const useEarthquakes = () => {
                 earthquakes: response.data,
                 loading: false,
                 error: null,
+                lastUpdated: new Date().toISOString(),
             });
+            return response.data;
         } catch (error) {
             setState(prev => ({
                 ...prev,
                 loading: false,
                 error: error.response?.data?.message || error.message,
+                lastUpdated: prev.lastUpdated,
             }));
+            throw error;
         }
     }, []);
 
@@ -34,33 +39,34 @@ const useEarthquakes = () => {
     }, [request]);
 
     const onFilterByTime = useCallback((minTime) => {
-        if (!minTime) return;
+        if (!minTime) return fetchEarthquakes();
 
         const formatted = minTime.includes("T")
             ? minTime
             : `${minTime}T00:00:00Z`;
 
         return request(() => earthquakeRepository.findByTime(formatted));
-    }, [request]);
+    }, [request, fetchEarthquakes]);
 
-    const onSync = useCallback((minMagnitude = 2.0, minTime = null) => {
+    const onSync = useCallback(async (minMagnitude = 2.0, minTime = null) => {
         const formattedTime =
             minTime && !minTime.includes("T")
                 ? `${minTime}T00:00:00Z`
                 : minTime;
 
-        return request(() =>
-            earthquakeRepository.sync(minMagnitude, formattedTime)
-        ).then(() => fetchEarthquakes());
-    }, [request, fetchEarthquakes]);
+        await request(() => earthquakeRepository.sync(minMagnitude, formattedTime));
+    }, [request]);
 
-    const onDelete = useCallback((id) => {
-        return request(() =>
-            earthquakeRepository.delete(id)
-        ).then(() => fetchEarthquakes());
+    const onDelete = useCallback(async (id) => {
+        await request(() => earthquakeRepository.delete(id));
+        await fetchEarthquakes();
     }, [request, fetchEarthquakes]);
 
     useEffect(() => {
+        fetchEarthquakes();
+    }, [fetchEarthquakes]);
+
+    const onReset = useCallback(() => {
         fetchEarthquakes();
     }, [fetchEarthquakes]);
 
@@ -70,6 +76,7 @@ const useEarthquakes = () => {
         onFilterByTime,
         onSync,
         onDelete,
+        onReset,
     };
 };
 

@@ -12,9 +12,11 @@ const App = () => {
         earthquakes,
         loading,
         error,
+        lastUpdated,
         onSync,
         onDelete,
         onFilterByTime,
+        onReset,
         refetch,
     } = useEarthquakes();
 
@@ -23,7 +25,7 @@ const App = () => {
             <div className="container">
 
                 {/* 1. Header Section */}
-                <AppHeader count={earthquakes.length} />
+                <AppHeader count={earthquakes.length} lastUpdated={lastUpdated} />
 
                 {/* 2. Error Handling */}
                 {error && (
@@ -36,6 +38,7 @@ const App = () => {
                 <FilterBar
                     onSync={onSync}
                     onFilterByTime={onFilterByTime}
+                    onReset={onReset}
                     loading={loading}
                 />
 
@@ -69,7 +72,7 @@ const App = () => {
     );
 };
 
-const AppHeader = ({ count }) => (
+const AppHeader = ({ count, lastUpdated }) => (
     <header className="row align-items-center mb-5">
         <div className="col-md-6 text-center text-md-start">
             <h1 className="fw-bold mb-0">
@@ -78,8 +81,15 @@ const AppHeader = ({ count }) => (
             <p className="text-muted mb-0 small">Real-time USGS Seismic Activity</p>
         </div>
         <div className="col-md-6 text-center text-md-end mt-3 mt-md-0">
-            <div className="badge bg-white text-dark border shadow-sm p-2 px-3">
-                <span className="text-primary fw-bold">{count}</span> Earthquakes Listed
+            <div className="d-flex flex-column align-items-md-end">
+                <div className="badge bg-white text-dark border shadow-sm p-2 px-3 mb-1">
+                    <span className="text-primary fw-bold">{count}</span> Earthquakes Listed
+                </div>
+                {lastUpdated && (
+                    <small className="text-muted" style={{ fontSize: '0.7rem' }}>
+                        Last updated: {new Date(lastUpdated).toLocaleTimeString()}
+                    </small>
+                )}
             </div>
         </div>
     </header>

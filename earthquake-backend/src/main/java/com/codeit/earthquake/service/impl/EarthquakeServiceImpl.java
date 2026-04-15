@@ -23,22 +23,32 @@ public class EarthquakeServiceImpl implements EarthquakeService {
     private final EarthquakeRepository repository;
 
     @Override
+    @Transactional
     public List<Earthquake> syncEarthquakes(Double minMagnitude, Instant minTime) {
-
+        log.info("Syncing earthquakes with minMag: {} and minTime: {}", minMagnitude, minTime);
         UsgsResponse response = usgsApiClient.fetchEarthquakes();
 
         if (response == null || response.getFeatures() == null) {
             return List.of();
         }
 
-        repository.deleteAll();
-
         List<Earthquake> earthquakes = response.getFeatures().stream()
                 .map(this::toEntity)
                 .filter(e -> isValid(e, minMagnitude, minTime))
                 .toList();
 
-        return repository.saveAll(earthquakes);
+        for (Earthquake eq : earthquakes) {
+            repository.findByExternalId(eq.getExternalId())
+                    .ifPresentOrElse(
+                            existing -> {
+                                eq.setId(existing.getId());
+                                repository.save(eq);
+                            },
+                            () -> repository.save(eq)
+                    );
+        }
+
+        return repository.findAll();
     }
 
     @Override
@@ -63,6 +73,12 @@ public class EarthquakeServiceImpl implements EarthquakeService {
         return true;
     }
 
+    @Override
+    public void deleteAll() {
+        log.info("Deleting all earthquake records");
+        repository.deleteAll();
+    }
+
     // ---------------- SIMPLE HELPERS ----------------
 
     private boolean isValid(Earthquake e, Double minMag, Instant minTime) {
@@ -85,6 +101,7 @@ public class EarthquakeServiceImpl implements EarthquakeService {
                 .longitude(c.get(0))
                 .latitude(c.get(1))
                 .depth(c.get(2))
+                .url(p.getUrl())
                 .build();
     }
 }

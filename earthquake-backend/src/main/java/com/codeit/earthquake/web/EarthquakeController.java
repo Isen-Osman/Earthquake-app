@@ -44,6 +44,12 @@ public class EarthquakeController {
         return service.deleteById(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
+    @DeleteMapping("/all")
+    public ResponseEntity<Void> deleteAll() {
+        service.deleteAll();
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/health")
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("Earthquake API is running");

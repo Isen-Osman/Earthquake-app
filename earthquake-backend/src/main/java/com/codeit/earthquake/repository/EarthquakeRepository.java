@@ -17,5 +17,7 @@ public interface EarthquakeRepository extends JpaRepository<Earthquake, Long> {
 
     List<Earthquake> findByTimeAfter(Instant minTime);
 
+    java.util.Optional<Earthquake> findByExternalId(String externalId);
+
     void deleteAll();
 }

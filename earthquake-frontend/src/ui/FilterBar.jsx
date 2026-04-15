@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 
-const FilterBar = ({ onSync, onFilterByTime, loading }) => {
+const FilterBar = ({ onSync, onFilterByTime, onReset, loading }) => {
     const [minMagnitude, setMinMagnitude] = useState(2.0);
     const [minTime, setMinTime] = useState('');
 
     const handleSync = () => onSync(minMagnitude, minTime);
+
+    const handleReset = () => {
+        setMinMagnitude(2.0);
+        setMinTime('');
+        onReset?.();
+    };
 
     return (
         <div className="card border-0 shadow-sm mb-4">
@@ -55,6 +61,23 @@ const FilterBar = ({ onSync, onFilterByTime, loading }) => {
                     <div className="col-12 col-md-auto ms-md-auto">
                         <div className="d-flex gap-2">
                             <button
+                                className="btn btn-sm btn-outline-secondary px-3"
+                                onClick={handleReset}
+                                disabled={loading}
+                                title="Reset filters and refresh all data"
+                            >
+                                🧹 Reset
+                            </button>
+
+                            <button
+                                className="btn btn-sm btn-outline-primary px-3"
+                                onClick={() => onFilterByTime(minTime)}
+                                disabled={loading || !minTime}
+                            >
+                                🔍 Filter
+                            </button>
+
+                            <button
                                 className="btn btn-sm btn-primary px-3 d-flex align-items-center gap-2"
                                 onClick={handleSync}
                                 disabled={loading}
@@ -67,14 +90,6 @@ const FilterBar = ({ onSync, onFilterByTime, loading }) => {
                                 ) : (
                                     <><span>🔄</span> Sync Data</>
                                 )}
-                            </button>
-
-                            <button
-                                className="btn btn-sm btn-outline-secondary px-3"
-                                onClick={() => onFilterByTime(minTime)}
-                                disabled={loading || !minTime}
-                            >
-                                🔍 Filter
                             </button>
                         </div>
                     </div>

@@ -95,4 +95,4 @@ earthquake-project/
     │   ├── repository/ # API Service layer
     │   └── axios/      # Client configuration
     └── vite.config.js
-sredi go za mene spored mojot proekt
+

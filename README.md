@@ -83,38 +83,16 @@ If you prefer to run the components individually:
 
 ---
 
-## 📘 Documentation & Implementation Details
-
-### 1. Project Setup Instructions
-To set up the project locally:
-- **Prerequisites:** Java 17+, Node.js 20+, Docker (optional but recommended), Maven.
-- **Cloning:** `git clone https://github.com/Isen-Osman/Earthquake-app && cd Earthquake-app`
-- **Environment:** The project uses standard Spring and React configurations. No additional `.env` files are required for basic setup.
-
-### 2. How to Run Backend and Frontend
-- **Using Docker (Recommended):**
-  ```bash
-  docker-compose up --build
-  ```
-  This starts the database (Postgres), the backend (Spring Boot), and the frontend (React/Nginx) automatically.
-- **Manual Execution:**
-    - **Backend:** `cd earthquake-backend && ./mvnw spring-boot:run`
-    - **Frontend:** `cd earthquake-frontend && npm install && npm run dev`
-
-### 3. Database Configuration Steps
-- **Docker Compose:** The database is configured via environment variables in `docker-compose.yml`. It uses PostgreSQL 17 on port `5435`.
-- **Backend Connection:** `earthquake-backend/src/main/resources/application.properties` points to `localhost:5435` for development.
-- **Auto-Update:** Hibernate is set to `update` mode, so the schema is created automatically on the first run.
-
-### 4. Assumptions Made
-- **Data Source:** It is assumed the USGS API is publicly accessible and follows the GeoJSON format.
-- **Sync Behavior:** It is assumed that "Sync" should update existing records based on their unique USGS ID (`externalId`) rather than deleting and recreating all data.
-- **Timezone:** Timestamps are handled in UTC (Z-format) for consistency across the system.
-
-### 5. Optional Improvements Implemented
-- **Upsert Logic:** Improved the backend `sync` logic to perform updates or inserts instead of a destructive `deleteAll()`. This preserves historical data from multiple sync sessions.
-- **Fixed URL Mapping:** Corrected the USGS detail URL mapping so users can now click the globe icon in the UI to view the original USGS report.
-- **Enhanced UI Controls:** Added a "Reset" button in the frontend to quickly clear filters and refresh the data.
-- **Activity Tracking:** Added a "Last Updated" status indicator in the frontend header to show the freshness of the data.
-- **Advanced Deletion:** Implemented a `DELETE /api/v1/earthquakes/all` endpoint in the backend for convenient database maintenance.
-
+## 📂 Project Structure
+text
+earthquake-project/
+├── backend/            # Spring Boot Application
+│   ├── src/            # Java source & resources
+│   └── docker-compose.yml
+└── frontend/           # React + Vite Application
+    ├── src/
+    │   ├── hooks/      # State & API hooks
+    │   ├── repository/ # API Service layer
+    │   └── axios/      # Client configuration
+    └── vite.config.js
+sredi go za mene spored mojot proekt

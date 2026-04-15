@@ -1,4 +1,4 @@
-# Earthquake App - Backend
+# Eartquake App - Backend
 
 This is the backend service for the Earthquake App, built with Spring Boot, Java 17, and PostgreSQL. It fetches earthquake data from the USGS API and provides a RESTful interface for searching and managing earthquake records.
 

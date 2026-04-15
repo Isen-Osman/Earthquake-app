@@ -82,17 +82,3 @@ If you prefer to run the components individually:
    *Note: In dev mode, Vite proxies `/api` requests to `http://localhost:8081`.*
 
 ---
-
-## 📂 Project Structure
-text
-earthquake-project/
-├── backend/            # Spring Boot Application
-│   ├── src/            # Java source & resources
-│   └── docker-compose.yml
-└── frontend/           # React + Vite Application
-    ├── src/
-    │   ├── hooks/      # State & API hooks
-    │   ├── repository/ # API Service layer
-    │   └── axios/      # Client configuration
-    └── vite.config.js
-

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -88,8 +88,11 @@ public class EarthquakeServiceImpl implements EarthquakeService {
     }
 
     private Earthquake toEntity(UsgsResponse.Feature f) {
+
         var p = f.getProperties();
-        var c = f.getGeometry().getCoordinates();
+
+        var g = f.getGeometry();
+        var c = (g != null) ? g.getCoordinates() : null;
 
         return Earthquake.builder()
                 .externalId(f.getId())
@@ -98,9 +101,9 @@ public class EarthquakeServiceImpl implements EarthquakeService {
                 .magnitude(p.getMag())
                 .magType(p.getMagType())
                 .time(Instant.ofEpochMilli(p.getTime()))
-                .longitude(c.get(0))
-                .latitude(c.get(1))
-                .depth(c.get(2))
+                .longitude(c != null && !c.isEmpty() ? c.get(0) : null)
+                .latitude(c != null && c.size() > 1 ? c.get(1) : null)
+                .depth(c != null && c.size() > 2 ? c.get(2) : null)
                 .url(p.getUrl())
                 .build();
     }

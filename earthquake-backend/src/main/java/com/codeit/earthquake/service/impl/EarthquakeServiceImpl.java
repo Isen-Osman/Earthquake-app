@@ -23,6 +23,7 @@ public class EarthquakeServiceImpl implements EarthquakeService {
     private final EarthquakeRepository repository;
 
     @Override
+    @Transactional
     public List<Earthquake> syncEarthquakes(Double minMagnitude, Instant minTime) {
 
         UsgsResponse response = usgsApiClient.fetchEarthquakes();
@@ -37,6 +38,10 @@ public class EarthquakeServiceImpl implements EarthquakeService {
                 .map(this::toEntity)
                 .filter(e -> isValid(e, minMagnitude, minTime))
                 .toList();
+
+        if (earthquakes.isEmpty()) {
+            log.warn("Sync completed but no earthquakes matched the filters: minMag={}, minTime={}", minMagnitude, minTime);
+        }
 
         return repository.saveAll(earthquakes);
     }
@@ -57,6 +62,7 @@ public class EarthquakeServiceImpl implements EarthquakeService {
     }
 
     @Override
+    @Transactional
     public boolean deleteById(Long id) {
         if (!repository.existsById(id)) return false;
         repository.deleteById(id);
@@ -66,14 +72,15 @@ public class EarthquakeServiceImpl implements EarthquakeService {
     // ---------------- SIMPLE HELPERS ----------------
 
     private boolean isValid(Earthquake e, Double minMag, Instant minTime) {
-        boolean magOk = minMag == null || e.getMagnitude() >= minMag;
-        boolean timeOk = minTime == null || e.getTime().isAfter(minTime);
+        boolean magOk = minMag == null || (e.getMagnitude() != null && e.getMagnitude() >= minMag);
+        boolean timeOk = minTime == null || (e.getTime() != null && e.getTime().isAfter(minTime));
         return magOk && timeOk;
     }
 
     private Earthquake toEntity(UsgsResponse.Feature f) {
         var p = f.getProperties();
-        var c = f.getGeometry().getCoordinates();
+        var g = f.getGeometry();
+        var c = g != null ? g.getCoordinates() : null;
 
         return Earthquake.builder()
                 .externalId(f.getId())
@@ -82,9 +89,10 @@ public class EarthquakeServiceImpl implements EarthquakeService {
                 .magnitude(p.getMag())
                 .magType(p.getMagType())
                 .time(Instant.ofEpochMilli(p.getTime()))
-                .longitude(c.get(0))
-                .latitude(c.get(1))
-                .depth(c.get(2))
+                .longitude(c != null && c.size() > 0 ? c.get(0) : null)
+                .latitude(c != null && c.size() > 1 ? c.get(1) : null)
+                .depth(c != null && c.size() > 2 ? c.get(2) : null)
+                .url(p.getUrl())
                 .build();
     }
 }

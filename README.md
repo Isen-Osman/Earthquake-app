@@ -21,11 +21,7 @@ This is the backend service for the Earthquake App, built with Spring Boot, Java
 ### Backend
 1.  **Start the Database:**
     ```bash
-    docker-compose up -d
-    ```
-2.  **Run the Application:**
-    ```bash
-    ./mvnw spring-boot:run
+    docker-compose up -d --build
     ```
     The server will start on port `8081`.
 
@@ -34,9 +30,6 @@ This is the backend service for the Earthquake App, built with Spring Boot, Java
 
 ### Frontend (Assumed React Setup)
 The backend is configured to allow CORS from `http://localhost:3000`. To run the frontend:
-1.  Navigate to your frontend project directory.
-2.  Install dependencies: `npm install`
-3.  Start the application: `npm start`
 
 ---
 
